@@ -21,7 +21,7 @@ closes = [float(line.decode("utf-8").split(",")[4]) for line in raw_data]
 #print(highs)
 
 
-lookback = 5
+lookback = 130
 
 highs_to_compare = highs[0:lookback-1]
 lows_to_compare  = lows[0:lookback-1]
@@ -48,8 +48,8 @@ for i in range(0,len(dates)-lookback-1):
 
 historical_comparisons.sort(key=lambda x:x.comparable, reverse=True)
 
-for comparable in historical_comparisons[0:20]:
-    print(dates[comparable.idx])
+for comparable in historical_comparisons[0:40]:
+    print("{0} {1}".format(dates[comparable.idx], comparable.comparable))
 
 """
 dir = "/Users/dzou/R/data/"
