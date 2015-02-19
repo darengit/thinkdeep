@@ -33,7 +33,7 @@ spDateVector = rev(as.Date(spFrame[,1]))
 spHighVector = rev(spFrame[,3])
 spLowVector = rev(spFrame[,4])
 
-intraday = TRUE
+intraday = FALSE
 
 if (intraday) {
 	spDateVector = c(spDateVector, as.Date("2015-02-05"))
