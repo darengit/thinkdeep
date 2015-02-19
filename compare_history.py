@@ -19,6 +19,12 @@ highs = []
 lows = []
 closes = []
 
+dates.append(datetime.datetime.strptime("2015-02-19", "%Y-%m-%d"))
+opens.append(0.0)
+highs.append(2101.13)
+lows.append(2090.79)
+closes.append(0.0)
+
 for line in raw_data:
 #dates = [datetime.datetime.strptime(line.decode("utf-8").split(",")[0], "%Y-%m-%d") for line in raw_data]
 #print(dates)

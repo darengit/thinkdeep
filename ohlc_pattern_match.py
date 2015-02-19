@@ -15,6 +15,7 @@ raw_data = list(response)
 #print(raw_data)
 raw_data.pop(0)
 raw_data.reverse()
+raw_data.append("2015-02-19,0.0,2102.13,2090.79,0.0".encode("utf-8"))
 
 class OHLC:
     def __init__(self, date, o, h, l, c):
