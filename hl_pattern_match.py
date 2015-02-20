@@ -15,7 +15,7 @@ raw_data = list(response)
 raw_data.pop(0)
 raw_data.reverse()
 if len(sys.argv) >= 3:
-    raw_data.append(sys.argv[3].encode("utf-8"))
+    raw_data.append(sys.argv[2].encode("utf-8"))
 
 class OHLC:
     def __init__(self, date, o, h, l, c):

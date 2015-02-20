@@ -4,6 +4,10 @@ import os
 import sys
 import numpy
 
+lookback = int(sys.argv[1])
+result_count = int(sys.argv[2])
+forward_days = int(sys.argv[3])
+
 today = datetime.date.today()
 
 url = "http://ichart.finance.yahoo.com/table.csv?s=%5EGSPC&d=" + str(today.month - 1) + "&e=" + str(today.day) + "&f=" + str(today.year) + "&g=d&a=0&b=3&c=1950&ignore=.csv"
@@ -13,26 +17,16 @@ raw_data = list(response)
 #print(raw_data)
 raw_data.pop(0)
 
+if len(sys.argv) >= 5:
+    raw_data.insert(0, sys.argv[4].encode("utf-8"))
+
 dates = []
 opens = []
 highs = []
 lows = []
 closes = []
 
-dates.append(datetime.datetime.strptime("2015-02-19", "%Y-%m-%d"))
-opens.append(0.0)
-highs.append(2101.13)
-lows.append(2090.79)
-closes.append(0.0)
-
 for line in raw_data:
-#dates = [datetime.datetime.strptime(line.decode("utf-8").split(",")[0], "%Y-%m-%d") for line in raw_data]
-#print(dates)
-#opens  = [float(line.decode("utf-8").split(",")[1]) for line in raw_data]
-#highs  = [float(line.decode("utf-8").split(",")[2]) for line in raw_data]
-#lows   = [float(line.decode("utf-8").split(",")[3]) for line in raw_data]
-#closes = [float(line.decode("utf-8").split(",")[4]) for line in raw_data]
-#print(highs)
     line_elts = line.decode("utf-8").split(",")
     dates.append(datetime.datetime.strptime(line_elts[0], "%Y-%m-%d"))
     opens.append(float(line_elts[1]))
@@ -40,14 +34,8 @@ for line in raw_data:
     lows.append(float(line_elts[3]))
     closes.append(float(line_elts[4]))
 
-
-lookback = int(sys.argv[1])
-result_count = int(sys.argv[2])
-forward_days = int(sys.argv[3])
-
 highs_to_compare = highs[0:lookback-1]
 lows_to_compare  = lows[0:lookback-1]
-
 
 class ComparableValue:
     def __init__(self, idx, value):
