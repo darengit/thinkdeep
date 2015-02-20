@@ -12,12 +12,10 @@ url = "http://ichart.finance.yahoo.com/table.csv?s=%5EGSPC&d=" + str(today.month
 response = urllib.request.urlopen(url)
 
 raw_data = list(response)
-#print(raw_data)
 raw_data.pop(0)
 raw_data.reverse()
-
 if len(sys.argv) >= 3:
-    raw_data.append(sys.argv[2].encode("utf-8"))
+    raw_data.append(sys.argv[3].encode("utf-8"))
 
 class OHLC:
     def __init__(self, date, o, h, l, c):
@@ -29,16 +27,16 @@ class OHLC:
 
 
 class OHLCTransition:
-    def __init__(self, ohlc_prev, ohlc):
-        self.date_prev = ohlc_prev.date
-        self.date = ohlc.date
+    def __init__(self, ohlc_before, ohlc_after):
+        self.date_before = ohlc_before.date
+        self.date_after = ohlc_after.date
 
-        self.bullish_intra_day_swing = 0 if (ohlc_prev.c-ohlc.l) > (ohlc.h-ohlc_prev.c) else 1
-        self.bullish_close = 0 if ohlc.c < ohlc.o else 1
+        self.high_transition = 0 if ohlc_after.h < ohlc_before.h else 1
+        self.low_transition = 0 if ohlc_after.l < ohlc_before.l else 1
 
     def __eq__(self, other):
-        return self.bullish_intra_day_swing == other.bullish_intra_day_swing and\
-               self.bullish_close == other.bullish_close
+        return self.high_transition == other.high_transition and\
+               self.low_transition == other.low_transition
 
 ohlc_transitions = []
 ohlc_prev = None
@@ -64,8 +62,8 @@ for starting_idx in range(0,len(ohlc_transitions)-lookback+1):
             match = False
             break
     if match:
-        print("{0:%Y-%m-%d}".format(ohlc_transitions[starting_idx+lookback-1].date))
+        print("{0:%Y-%m-%d}".format(ohlc_transitions[starting_idx+lookback-1].date_after))
         if starting_idx+lookback < len(ohlc_transitions):
-            print("{0} {1}".format(ohlc_transitions[starting_idx+lookback].bullish_intra_day_swing,
-                                   ohlc_transitions[starting_idx+lookback].bullish_close))
+            print(ohlc_transitions[starting_idx+lookback].high_transition)
+            print(ohlc_transitions[starting_idx+lookback].low_transition)
 
