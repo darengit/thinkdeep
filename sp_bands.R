@@ -33,12 +33,12 @@ spDateVector = rev(as.Date(spFrame[,1]))
 spHighVector = rev(spFrame[,3])
 spLowVector = rev(spFrame[,4])
 
-intraday = FALSE
+intraday = TRUE
 
 if (intraday) {
-	spDateVector = c(spDateVector, as.Date("2015-02-05"))
-	spHighVector = c(spHighVector, 2060)
-	spLowVector = c(spLowVector, 2043.45)
+	spDateVector = c(spDateVector, as.Date("2015-02-25"))
+	spHighVector = c(spHighVector, 2119.59)
+	spLowVector = c(spLowVector, 2109.89)
 }
 
 vixDateVector = rev(as.Date(vixFrame[,1]))
