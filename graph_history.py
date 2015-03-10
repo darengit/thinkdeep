@@ -9,6 +9,17 @@ import numpy
 import matplotlib.pyplot
 import matplotlib.dates
 
+import pymysql
+
+conn = pymysql.connect(host="localhost", user="root", passwd="", database="db")
+conn.autocommit(False)
+cur = conn.cursor()
+
+cur.execute("insert into sp500 values ('2015-03-05',12,12,12,12)")
+conn.commit()
+conn.close()
+
+
 today = datetime.date.today()
 
 url = "http://ichart.finance.yahoo.com/table.csv?s=%5EGSPC&d=" + str(today.month - 1) + "&e=" + str(today.day) + "&f=" + str(today.year) + "&g=d&a=0&b=3&c=1950&ignore=.csv"
