@@ -21,3 +21,21 @@ def yahoo_finance_download(conn, tablename):
         conn.cursor().execute("insert into {0} values ('{1}',{2},{3},{4},{5})".format(tablename, *elts))
     conn.commit()
 
+def load_ohlc(conn, tablename, start_date, end_date):
+    cursor = conn.cursor()
+    cursor.execute("select date,open,high,low,close from {0} where date between '{1}' and '{2}' order by date".format(tablename, start_date, end_date))
+
+    dates = []
+    opens = []
+    highs = []
+    lows = []
+    closes = []
+
+    for row in cursor:
+        dates.append(row[0])
+        opens.append(row[1])
+        highs.append(row[2])
+        lows.append(row[3])
+        closes.append(row[4])
+
+    return (dates, opens, highs, lows, closes)

@@ -1,47 +1,18 @@
-
-import urllib.request
-import datetime
-import bisect
 import sys
-import os
 
-import numpy
-import matplotlib.pyplot
-import matplotlib.dates
+#import matplotlib.pyplot
 
-import pymysql
+from utils.db import local_pymysql_conn, load_ohlc
+from utils.graph import graph_ohlc_pivots, alternating_pivots, fuzzy_pivots
 
-conn = pymysql.connect(host="localhost", user="root", passwd="", database="db")
-conn.autocommit(False)
-cur = conn.cursor()
+tablename = sys.argv[1]
+start_date = sys.argv[2]
+end_date = sys.argv[3]
 
-cur.execute("insert into sp500 values ('2015-03-05',12,12,12,12)")
-conn.commit()
-conn.close()
+conn = local_pymysql_conn()
 
+(dates, opens, highs, lows, closes) = load_ohlc(conn, tablename, start_date, end_date)
+(high_pivots, low_pivots) = alternating_pivots(dates, highs, lows)
 
-today = datetime.date.today()
+graph_ohlc_pivots(dates, opens, highs, lows, closes, high_pivots, low_pivots)
 
-url = "http://ichart.finance.yahoo.com/table.csv?s=%5EGSPC&d=" + str(today.month - 1) + "&e=" + str(today.day) + "&f=" + str(today.year) + "&g=d&a=0&b=3&c=1950&ignore=.csv"
-response = urllib.request.urlopen(url)
-
-raw_data = list(response)
-raw_data.pop(0)
-raw_data.reverse()
-
-dates = [datetime.datetime.strptime(line.decode("utf-8").split(",")[0], "%Y-%m-%d") for line in raw_data]
-opens  = [float(line.decode("utf-8").split(",")[1]) for line in raw_data]
-highs  = [float(line.decode("utf-8").split(",")[2]) for line in raw_data]
-lows   = [float(line.decode("utf-8").split(",")[3]) for line in raw_data]
-closes = [float(line.decode("utf-8").split(",")[4]) for line in raw_data]
-
-start_date = datetime.datetime.strptime(sys.argv[1], "%Y-%m-%d")
-end_date = datetime.datetime.strptime(sys.argv[2], "%Y-%m-%d")
-
-start_date_idx = bisect.bisect_left(dates, start_date)
-end_date_idx = bisect.bisect_right(dates, end_date)
-
-matplotlib.pyplot.plot_date(x=dates[start_date_idx:end_date_idx], y=highs[start_date_idx:end_date_idx], fmt="-")
-matplotlib.pyplot.plot_date(x=dates[start_date_idx:end_date_idx], y=lows[start_date_idx:end_date_idx], fmt="-")
-matplotlib.pyplot.grid(True)
-matplotlib.pyplot.show()
