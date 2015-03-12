@@ -33,9 +33,9 @@ def load_ohlc(conn, tablename, start_date, end_date):
 
     for row in cursor:
         dates.append(row[0])
-        opens.append(row[1])
-        highs.append(row[2])
-        lows.append(row[3])
-        closes.append(row[4])
+        opens.append(float(row[1]))
+        highs.append(float(row[2]))
+        lows.append(float(row[3]))
+        closes.append(float(row[4]))
 
     return (dates, opens, highs, lows, closes)
