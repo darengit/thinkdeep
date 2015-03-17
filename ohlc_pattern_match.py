@@ -34,7 +34,7 @@ class OHLCTransition:
         self.date = ohlc.date
 
         self.bullish_intra_day_swing = 0 if (ohlc_prev.c-ohlc.l) > (ohlc.h-ohlc_prev.c) else 1
-        self.bullish_close = 0 if ohlc.c < ohlc.o else 1
+        self.bullish_close = 0 if ohlc.c < ohlc_prev.c else 1
 
     def __eq__(self, other):
         return self.bullish_intra_day_swing == other.bullish_intra_day_swing and\
