@@ -1,7 +1,8 @@
-class OHLCTransition:
+from utils.transition import Transition
+
+class OHLCTransition(Transition):
     def __init__(self, ohlc_prev, ohlc):
-        self.date_prev = ohlc_prev.date
-        self.date = ohlc.date
+        super(OHLCTransition, self).__init__(ohlc_prev, ohlc)
 
         self.bullish_intra_day_swing = 0 if (ohlc_prev.c-ohlc.l) > (ohlc.h-ohlc_prev.c) else 1
         self.bullish_close = 0 if ohlc.c < ohlc_prev.c else 1

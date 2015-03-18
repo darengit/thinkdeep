@@ -3,10 +3,12 @@ import sys
 from utils.db import local_pymysql_conn, load_all_ohlc
 from utils.ohlc import OHLC
 from utils.ohlc_transition import OHLCTransition
+from utils.hl_transition import HLTransition
 
 
 tablename = sys.argv[1]
-lookback = int(sys.argv[2])
+transition = eval(sys.argv[2])
+lookback = int(sys.argv[3])
 
 conn = local_pymysql_conn()
 (dates, opens, highs, lows, closes) = load_all_ohlc(conn, tablename)
@@ -18,7 +20,7 @@ for (date, o, h, l, c) in zip(dates, opens, highs, lows, closes):
     ohlc = OHLC(date, o, h, l, c)
 
     if ohlc_prev is not None:
-        ohlc_transitions.append(OHLCTransition(ohlc_prev, ohlc))
+        ohlc_transitions.append(transition(ohlc_prev, ohlc))
 
     ohlc_prev = ohlc
 
@@ -30,7 +32,3 @@ for starting_idx in range(0,len(ohlc_transitions)-lookback+1):
             break
     if match:
         print("{0:%Y-%m-%d}".format(ohlc_transitions[starting_idx+lookback-1].date))
-        if starting_idx+lookback < len(ohlc_transitions):
-            print("{0} {1}".format(ohlc_transitions[starting_idx+lookback].bullish_intra_day_swing,
-                                   ohlc_transitions[starting_idx+lookback].bullish_close))
-
