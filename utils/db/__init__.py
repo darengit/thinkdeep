@@ -39,3 +39,6 @@ def load_ohlc(conn, tablename, start_date, end_date):
         closes.append(float(row[4]))
 
     return (dates, opens, highs, lows, closes)
+
+def load_all_ohlc(conn, tablename):
+    return load_ohlc(conn, tablename, MIN_DATE, MAX_DATE)

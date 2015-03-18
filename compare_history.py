@@ -1,38 +1,20 @@
-import urllib.request
-import datetime
-import os
 import sys
 import numpy
 
-lookback = int(sys.argv[1])
-result_count = int(sys.argv[2])
-forward_days = int(sys.argv[3])
+from utils.db import local_pymysql_conn, load_all_ohlc
 
-today = datetime.date.today()
+tablename = sys.argv[1]
+lookback = int(sys.argv[2])
+result_count = int(sys.argv[3])
+forward_days = int(sys.argv[4])
 
-url = "http://ichart.finance.yahoo.com/table.csv?s=%5EGSPC&d=" + str(today.month - 1) + "&e=" + str(today.day) + "&f=" + str(today.year) + "&g=d&a=0&b=3&c=1950&ignore=.csv"
-response = urllib.request.urlopen(url)
-
-raw_data = list(response)
-#print(raw_data)
-raw_data.pop(0)
-
-if len(sys.argv) >= 5:
-    raw_data.insert(0, sys.argv[4].encode("utf-8"))
-
-dates = []
-opens = []
-highs = []
-lows = []
-closes = []
-
-for line in raw_data:
-    line_elts = line.decode("utf-8").split(",")
-    dates.append(datetime.datetime.strptime(line_elts[0], "%Y-%m-%d"))
-    opens.append(float(line_elts[1]))
-    highs.append(float(line_elts[2]))
-    lows.append(float(line_elts[3]))
-    closes.append(float(line_elts[4]))
+conn = local_pymysql_conn()
+(dates, opens, highs, lows, closes) = load_all_ohlc(conn, tablename)
+dates.reverse()
+opens.reverse()
+highs.reverse()
+lows.reverse()
+closes.reverse()
 
 highs_to_compare = highs[0:lookback-1]
 lows_to_compare  = lows[0:lookback-1]
