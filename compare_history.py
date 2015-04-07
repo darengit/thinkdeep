@@ -18,6 +18,7 @@ closes.reverse()
 
 highs_to_compare = highs[0:lookback-1]
 lows_to_compare  = lows[0:lookback-1]
+closes_to_compare = closes[0:lookback-1]
 
 class ComparableValue:
     def __init__(self, idx, value):
@@ -32,7 +33,10 @@ for i in range(0,len(dates)-lookback-1):
     lows_compare_to = lows[i:i+lookback-1]
     lows_corrcoef = numpy.corrcoef(lows_to_compare, lows_compare_to)[0][1]
 
-    curr_comparable = ComparableValue(i, highs_corrcoef+lows_corrcoef)
+    closes_compare_to = closes[i:i+lookback-1]
+    closes_corrcoef = numpy.corrcoef(closes_to_compare, closes_compare_to)[0][1]
+
+    curr_comparable = ComparableValue(i, highs_corrcoef+lows_corrcoef+closes_corrcoef)
     historical_comparisons.append(curr_comparable)
 
 historical_comparisons.sort(key=lambda x:x.comparable, reverse=True)
