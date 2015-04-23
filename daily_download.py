@@ -18,23 +18,25 @@ def daily_std_moves(conn):
     cursor.execute("select s.date, s.high, s.low, v.high from sp500 s inner join vix v on s.date=v.date order by s.date")
 
     first_values = cursor.fetchone()
-    prev_high = float(first_values[1])
-    prev_low = float(first_values[2])
-    prev_vol = float(first_values[3])
+    prev_high = first_values[1]
+    prev_low = first_values[2]
+    prev_vol = first_values[3]
 
     write_cursor = conn.cursor()
     write_cursor.execute("truncate daily_std_moves")
-    write_cursor.execute("insert into daily_std_moves (date,high,low,std,low_to_high) values ('{0}',{1},{2},{3},{4})".format(*(first_values + (calc_std(prev_low,prev_high,prev_vol/math.sqrt(252)),))))
+    write_cursor.execute("insert into daily_std_moves (date,low_to_high) values ('{0}',{1})".\
+        format(first_values[0],calc_std(prev_low,prev_high,prev_vol/math.sqrt(252))))
 
     for row in cursor:
-        two_day_vol = max(prev_vol, float(row[3])) / math.sqrt(252/2)
-        write_cursor.execute("insert into daily_std_moves values('{0}',{1},{2},{3},{4},{5},{6})"\
-            .format(*(row + (calc_std(float(row[2]), float(row[1]), float(row[3])/math.sqrt(252)),
-                             calc_std(prev_low, float(row[1]), two_day_vol),
-                             calc_std(prev_high, float(row[2]), two_day_vol)))))
-        prev_high = float(row[1])
-        prev_low = float(row[2])
-        prev_vol = float(row[3])
+        two_day_vol = max(prev_vol, row[3]) / math.sqrt(252/2)
+        write_cursor.execute("insert into daily_std_moves values('{0}',{1},{2},{3})"\
+            .format(row[0],
+                    calc_std(row[2], row[1], row[3]/math.sqrt(252)),
+                    calc_std(prev_low, row[1], two_day_vol),
+                    calc_std(prev_high, row[2], two_day_vol)))
+        prev_high = row[1]
+        prev_low = row[2]
+        prev_vol = row[3]
 
     conn.commit()
 

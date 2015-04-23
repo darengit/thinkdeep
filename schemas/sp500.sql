@@ -1,7 +1,7 @@
 create table sp500 (
     date date primary key,
-    open decimal(10,2),
-    high decimal(10,2),
-    low decimal(10,2),
-    close decimal(10,2)
+    open float(10,2),
+    high float(10,2),
+    low float(10,2),
+    close float(10,2)
 );
