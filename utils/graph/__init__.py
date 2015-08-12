@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import matplotlib.pyplot
 
 def graph_ohlc_pivots(dates, opens, highs, lows, closes, high_pivots, low_pivots):
@@ -14,6 +16,8 @@ def graph_ohlc_pivots(dates, opens, highs, lows, closes, high_pivots, low_pivots
     axes.plot(list(high_pivots.keys()), list(high_pivots.values()), "g^")
     axes.plot(list(low_pivots.keys()), list(low_pivots.values()), "rv")
 
+
+    matplotlib.pyplot.xlim(dates[0]-timedelta(days=5), dates[-1]+timedelta(days=5))
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.show()
 
