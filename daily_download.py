@@ -8,7 +8,7 @@ conn = local_pymysql_conn()
 for tablename in TABLE_TICKER_MAPPING.keys():
     yahoo_finance_download(conn, tablename)
     print("...downloaded {} into db".format(tablename))
-
+"""
 def calc_std(base, base_plus_delta, std):
     return round(100*(base_plus_delta-base)/base/std, 2)
 
@@ -42,5 +42,6 @@ def daily_std_moves(conn):
 
 daily_std_moves(conn)
 print("...computed std of daily and overnight moves")
+"""
 
 conn.close()
