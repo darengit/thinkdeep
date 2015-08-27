@@ -21,7 +21,7 @@ def graph_ohlc_pivots(dates, opens, highs, lows, closes, high_pivots, low_pivots
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.show()
 
-def find_alternating_pivot(dates, highs, lows):
+def find_alternating_pivot(dates, highs, lows, skip):
     length = len(dates)
 
     highest_high_idx = 0
@@ -36,7 +36,7 @@ def find_alternating_pivot(dates, highs, lows):
     lowest_low_idx = 0
     lowest_low = lows[lowest_low_idx]
 
-    i=1
+    i=1+skip
     while i<length:
         if highest_low > highs[i] and highest_low > highs[0]:
             return (highest_high_idx, "high", highest_low_idx)
@@ -61,11 +61,11 @@ def find_alternating_pivot(dates, highs, lows):
     return (None, None, None)
    
 
-def alternating_pivots(dates, highs, lows):
-    (idx, high_or_low, next_pivot_starting_idx) = find_alternating_pivot(dates, highs, lows)
+def alternating_pivots(dates, highs, lows, skip):
+    (idx, high_or_low, next_pivot_starting_idx) = find_alternating_pivot(dates, highs, lows, skip)
 
     if idx is not None:
-        (high_pivots, low_pivots) = alternating_pivots(dates[next_pivot_starting_idx:], highs[next_pivot_starting_idx:], lows[next_pivot_starting_idx:])
+        (high_pivots, low_pivots) = alternating_pivots(dates[next_pivot_starting_idx:], highs[next_pivot_starting_idx:], lows[next_pivot_starting_idx:], max(idx-next_pivot_starting_idx,0))
         if high_or_low is "high":
             high_pivots[dates[idx]] = highs[idx]
         else:

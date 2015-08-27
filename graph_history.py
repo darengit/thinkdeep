@@ -12,7 +12,7 @@ end_date = sys.argv[3]
 conn = local_pymysql_conn()
 
 (dates, opens, highs, lows, closes) = load_ohlc(conn, tablename, start_date, end_date)
-(high_pivots, low_pivots) = alternating_pivots(dates, highs, lows)
+(high_pivots, low_pivots) = alternating_pivots(dates, highs, lows, 0)
 
 graph_ohlc_pivots(dates, opens, highs, lows, closes, high_pivots, low_pivots)
 
