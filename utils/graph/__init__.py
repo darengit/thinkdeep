@@ -1,6 +1,30 @@
 from datetime import timedelta
-
+import math
 import matplotlib.pyplot
+
+def graph_ohlc_voladj(dates, opens, highs, lows, closes, vcloses):
+    high_minus_low = list(h-l for h,l in zip(highs, lows))
+
+    axes = matplotlib.pyplot.axes()
+    bars = axes.bar(dates, high_minus_low, 0, bottom=lows, color="k")
+
+    for (o, c, bar) in zip(opens, closes, bars):
+        x = bar.get_x()
+        axes.plot((x-0.4, x), (o, o), color="k")
+        axes.plot((x, x+0.4), (c, c), color="k")
+
+
+    closes_voladj = [c*math.exp(0.7*v/100) for (c,v) in zip(closes, vcloses)]
+    closes_voladj = [x - (closes_voladj[0]-closes[0]) for x in closes_voladj]
+    #print(closes_voladj)
+    axes.plot(dates, closes_voladj)
+    #axes.plot(list(high_pivots.keys()), list(high_pivots.values()), "gv")
+    #axes.plot(list(low_pivots.keys()), list(low_pivots.values()), "r^")
+
+
+    matplotlib.pyplot.xlim(dates[0]-timedelta(days=5), dates[-1]+timedelta(days=5))
+    matplotlib.pyplot.grid(True)
+    matplotlib.pyplot.show()
 
 def graph_ohlc_pivots(dates, opens, highs, lows, closes, high_pivots, low_pivots):
     high_minus_low = list(h-l for h,l in zip(highs, lows))
