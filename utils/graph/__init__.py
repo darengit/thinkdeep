@@ -15,7 +15,7 @@ def graph_ohlc_voladj(dates, opens, highs, lows, closes, vcloses):
 
 
     closes_voladj = [c*math.exp(0.7*v/100) for (c,v) in zip(closes, vcloses)]
-    closes_voladj = [x - (closes_voladj[0]-closes[0]) for x in closes_voladj]
+    closes_voladj = [x - (closes[0]*(math.exp(0.7*0.13)-1)) for x in closes_voladj]
     #print(closes_voladj)
     axes.plot(dates, closes_voladj)
     #axes.plot(list(high_pivots.keys()), list(high_pivots.values()), "gv")
