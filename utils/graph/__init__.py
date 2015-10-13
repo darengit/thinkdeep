@@ -14,8 +14,9 @@ def graph_ohlc_voladj(dates, opens, highs, lows, closes, vcloses):
         axes.plot((x, x+0.4), (c, c), color="k")
 
 
-    closes_voladj = [c*(math.exp(0.7*v/100)-(math.exp(0.7*0.12)-1)) for (c,v) in zip(closes, vcloses)]
-    #closes_voladj = [x - (closes[0]*(math.exp(0.7*0.13)-1)) for x in closes_voladj]
+    #closes_voladj = [c*(math.exp(0.7*v/100)-(math.exp(0.7*0.12)-1)) for (c,v) in zip(closes, vcloses)]
+    closes_voladj = [c*math.exp(0.7*v/100) for (c,v) in zip(closes, vcloses)]
+    closes_voladj = [x - (closes[0]*(math.exp(0.7*0.13)-1)) for x in closes_voladj]
     #print(closes_voladj)
     axes.plot(dates, closes_voladj)
     #axes.plot(list(high_pivots.keys()), list(high_pivots.values()), "gv")
@@ -44,6 +45,25 @@ def graph_ohlc_pivots(dates, opens, highs, lows, closes, high_pivots, low_pivots
     matplotlib.pyplot.xlim(dates[0]-timedelta(days=5), dates[-1]+timedelta(days=5))
     matplotlib.pyplot.grid(True)
     matplotlib.pyplot.show()
+
+def graph_ohlc_darenger_bands(dates, opens, highs, lows, closes, high_band, low_band):
+    high_minus_low = list(h-l for h,l in zip(highs, lows))
+
+    axes = matplotlib.pyplot.axes()
+    bars = axes.bar(dates, high_minus_low, 0, bottom=lows, color="k")
+
+    for (o, c, bar) in zip(opens, closes, bars):
+        x = bar.get_x()
+        axes.plot((x-0.4, x), (o, o), color="k")
+        axes.plot((x, x+0.4), (c, c), color="k")
+
+    axes.plot(dates, high_band)
+    axes.plot(dates, low_band)
+
+    matplotlib.pyplot.xlim(dates[0]-timedelta(days=5), dates[-1]+timedelta(days=5))
+    matplotlib.pyplot.grid(True)
+    matplotlib.pyplot.show()
+
 
 def find_alternating_pivot(dates, highs, lows, skip):
     length = len(dates)
@@ -163,3 +183,25 @@ def next_pivot(dates, highs, lows):
 
     return (None, None)
 
+def darenger_bands(highs, lows, vhighs):
+    band_exp = -0.7
+    high_band = [highs[0]]#+high[0]*vhighs[0]/100/math.sqrt(252)]
+    low_band = [lows[0]]#-low[0]*vhighs[0]/100/math.sqrt(252)]
+
+    i=1
+    while i<len(highs):
+        high_band.append(high_band[i-1]*math.exp(band_exp)+highs[i])
+        low_band.append(low_band[i-1]*math.exp(band_exp)+lows[i])
+        i+=1
+
+    band = highs[0]*vhighs[0]/100/math.sqrt(252)
+    high_band[0] += band
+    low_band[0] -= band
+
+    for i in range(1,len(highs)):
+        exp_sum = (math.exp(band_exp*(i+1))-1)/(math.exp(band_exp)-1)
+        band = highs[i]*vhighs[i]/100/math.sqrt(252)
+        high_band[i] = high_band[i]/exp_sum + band
+        low_band[i] = low_band[i]/exp_sum - band
+
+    return (high_band, low_band)
