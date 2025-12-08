@@ -6,7 +6,7 @@ from util.yfinance_helper import get_ticker_data_with_cache
 tickers = get_superset_of_tickers()
 
 # Fetch sector, industry, previous year last close, and latest close
-df = get_ticker_data_with_cache(tickers)
+df = get_ticker_data_with_cache(tickers, batch_size=100)
 
 # Print only the first 5 rows to avoid huge output
 print(df.head())

@@ -56,7 +56,7 @@ def get_ticker_data_with_cache(tickers: List[str], batch_size: int = 50) -> pd.D
                 else:
                     ticker_hist = hist[t]
 
-                latest_close = ticker_hist["Close"].iloc[-1]
+                latest_close = ticker_hist["Close"].dropna().iloc[-1]
             except Exception:
                 print(f"Could not fetch latest price for {t}")
                 continue
@@ -98,8 +98,11 @@ def get_ticker_data_with_cache(tickers: List[str], batch_size: int = 50) -> pd.D
             })
 
         print(f"Processed tickers {i+1} to {i+len(batch)} of {total_tickers}")
+        
         #sleepSec = 60
         #print(f"sleeping {sleepSec} seconds")
+        #sleep(sleepSec)
+
 
     # Save updated cache
     cache_df.to_csv(CACHE_FILE)
