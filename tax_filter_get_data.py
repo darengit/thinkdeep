@@ -8,8 +8,6 @@ tickers = get_superset_of_tickers()
 # Fetch sector, industry, previous year last close, and latest close
 df = get_ticker_data_with_cache(tickers, batch_size=100)
 
-# Print only the first 5 rows to avoid huge output
-print(df.head())
 
 
 df["Pct Change"] = (
@@ -17,6 +15,15 @@ df["Pct Change"] = (
     / df["Prev Year Last Close"]
 )
 
+# Print only the first 5 rows to avoid huge output
+print(df.head())
+
+
+df.loc[df["Ticker"] == "FISV", "Sector"] = "Technology"
+df.loc[df["Ticker"] == "FISV", "Industry"] = "Information Technology Services"
+
+
 
 df.to_csv("output.csv", index=False)
+
 
