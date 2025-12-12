@@ -1,9 +1,16 @@
 # main.py
-from util.get_tickers import get_superset_of_tickers
+#from util.get_tickers import get_superset_of_tickers
+#from util.get_tickers import all_tickers
+
+from util.get_tickers_from_csv import all_tickers
 from util.yfinance_helper import get_ticker_data_with_cache
 
+
+files = ["IJH_holdings.csv", "IVV_holdings.csv", "IWB_holdings.csv"]
 # Get the full ticker list
-tickers = get_superset_of_tickers()
+tickers = all_tickers(files)
+
+print(tickers)
 
 # Fetch sector, industry, previous year last close, and latest close
 df = get_ticker_data_with_cache(tickers, batch_size=100)

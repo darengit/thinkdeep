@@ -69,8 +69,74 @@ def get_superset_of_tickers():
     return superset
 
 
+
+
+
+
+
+import requests
+
+def get_tradingview_tickers(symbol_code):
+    """
+    Get tickers for a TradingView index via JSON API.
+    symbol_code examples:
+        SPX  -> S&P 500
+        MID  -> S&P 400
+        RUI  -> Russell 1000
+    """
+    url = "https://scanner.tradingview.com/america/scan"
+
+    payload = {
+        "symbols": {"query": {"types": []}, "tickers": []},
+        "columns": ["name"],
+        "sort": {"sortBy": "name", "sortOrder": "asc"},
+        "options": {"lang": "en"},
+        "filter": [{"left": "name", "operation": "match", "right": symbol_code}]
+    }
+
+    resp = requests.post(url, json=payload)
+    resp.raise_for_status()
+    data = resp.json()
+
+    print(data)
+
+    tickers = [item["s"] for item in data.get("data", [])]
+    return tickers
+
+
+def all_tickers():
+    """
+    Returns a deduplicated list of all tickers from:
+        - S&P 500
+        - S&P 400
+        - Russell 1000
+    """
+    sp500 = get_tradingview_tickers("SPX")
+    sp400 = get_tradingview_tickers("MID")
+    rus1000 = get_tradingview_tickers("RUI")
+
+    # Merge and deduplicate while preserving order
+    seen = set()
+    all_list = []
+    for t in sp500 + sp400 + rus1000:
+        if t not in seen:
+            all_list.append(t)
+            seen.add(t)
+
+    return all_list
+
+
+# Example usage
+if __name__ == "__main__":
+    tickers = all_tickers()
+    print("Total unique tickers:", len(tickers))
+    print(tickers[:20], "...")
+
+
+
+'''
 if __name__ == "__main__":
     tickers = get_superset_of_tickers()
     print("First 20 tickers:")
     print(tickers[:20])
-
+'''
