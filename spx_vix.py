@@ -31,10 +31,15 @@ combined['vix_low_filled'] = combined['vix_low'].fillna(combined['vix_close_fill
 combined = combined.dropna(subset=['spx_low', 'spx_high'])
 
 # Calculate bands
-combined['low_band'] = combined['spx_low'] * (1 + combined['vix_high_filled'] / 100 / 5)
-combined['high_band'] = combined['spx_high'] * (1 + combined['vix_low_filled'] / 100 / 5)
+combined['low_band'] = combined['spx_low'] * (1 + combined['vix_high_filled'] / 100 / 3)
+combined['high_band'] = combined['spx_high'] * (1 + combined['vix_low_filled'] / 100 / 3)
 combined['mid_band'] = (combined['low_band'] + combined['high_band']) / 2
 combined['mid_band_20ma'] = combined['mid_band'].rolling(window=20).mean()
+
+
+# print the most recent 5 rows' worth of data to verify calculations
+print(combined[['spx_low', 'spx_high', 'vix_high_filled', 'vix_low_filled', 'low_band', 'high_band']].tail())
+
 
 # Plot
 fig = go.Figure()
