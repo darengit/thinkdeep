@@ -116,8 +116,8 @@ print(combined[["vix_close_adjusted", "vix_close_adjusted_prev", "spx_return", "
 # which is the difference between spx_return and quadratic_fit
 combined["residual"] = combined["spx_return"] - combined["quadratic_fit"]
 
-# create a column which is the 5 day moving average of the residual
-combined["residual_5dma"] = combined["residual"].rolling(window=5).mean()
+# create a column which is the 20 day moving average of the residual
+combined["residual_20dma"] = combined["residual"].rolling(window=20).mean()
 
 # create an html page with 2 stacked plots, top and bottom
 # on the top plot plot spx_close
@@ -155,15 +155,15 @@ fig.add_trace(
     row=2, col=1
 )
 
-# also add residual_5dma as a line plot on the same bottom plot
+# also add residual_20dma as a line plot on the same bottom plot
 # with the same y-axis as the residual bars
 # but with a different color and a legend entry
 fig.add_trace(
     go.Scatter(
         x=combined.index,
-        y=combined["residual_5dma"],
+        y=combined["residual_20dma"],
         mode='lines',
-        name='Residual 5DMA',
+        name='Residual 20DMA',
         line=dict(color='black')
      ),
      row=2, col=1

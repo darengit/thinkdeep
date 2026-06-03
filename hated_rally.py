@@ -107,7 +107,7 @@ def main():
     filtered = combined[
         (combined["spx_pct_from_ath"] == 0) &
         (combined["vix_high"] > 19) &
-        (combined["spx_close_20dma_slope"] > .003) &
+        (combined["spx_close_20dma_slope"] > .003) # &
         (combined["vix_high_20dma_slope"] < -0.3)
     ]
 
